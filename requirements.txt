@@ -1,0 +1,10 @@
+pandas
+numpy
+Flask
+matplotlib
+seaborn
+scikit-learn
+dvc
+mlflow
+setuptools
+-e .
