@@ -18,7 +18,7 @@ import random
 class DataIngestionConfig:
     train_data_path:str = os.path.join('artifacts','train_data.csv')
     test_data_path:str = os.path.join('artifacts','test_data.csv')
-    raw_data_path:str = os.path.join('artifacts','raw_data.csv')
+    raw_data_path:str = os.path.join('artifacts')
 # permission denied on this address     ^
 
 class DataIngestionPhase:
@@ -26,24 +26,26 @@ class DataIngestionPhase:
         self.dataIngestionConfig = DataIngestionConfig
 
     def dataIngestion(self):
-        mlflow_logs = Mlflow_logs()
-        with mlflow.start_run():
-            logging.info("Data Ingestion Phase Start")
-            mlflow_logs.log_msg("Data Ingestion Phase Start")
-            try:
-                df = pd.read_csv("notebooks/data/Dataset.csv")
-                os.makedirs(os.path.join(self.dataIngestionConfig.raw_data_path), exist_ok=True)
-                df.to_csv(self.dataIngestionConfig.raw_data_path, index=False)
-                
-                mlflow_logs.log_msg("Train Test Split")
-                train_set, test_set = train_test_split(df, test_size=0.2, random_state=42)
-                train_set.to_csv(self.dataIngestionConfig.train_data_path, index=False, header=True)
-                test_set.to_csv(self.dataIngestionConfig.test_data_path, index=False, header=True)
-                mlflow_logs.log_msg("Data Ingestion Phase Complete")
+        logging.info("Data Ingestion Phase Start")
+        try:
+            df = pd.read_csv("notebooks/data/Dataset.csv")
+            os.makedirs(self.dataIngestionConfig.raw_data_path, exist_ok=True)
+            df.to_csv(os.path.join(self.dataIngestionConfig.raw_data_path, "raw_data.csv"), index=False)
 
-            except Exception as e:
-                mlflow_logs.log_msg(f"Exception : {e}")
-                raise CustomException(e,sys)
+            logging.info("Train Test Split")    
+            train_set, test_set = train_test_split(df, test_size=0.2, random_state=42)
+            train_set.to_csv(self.dataIngestionConfig.train_data_path, index=False, header=True)
+            test_set.to_csv(self.dataIngestionConfig.test_data_path, index=False, header=True)
+
+            logging.info("Data Ingestion Completed Successfully")    
+            return(
+                self.dataIngestionConfig.train_data_path,
+                self.dataIngestionConfig.test_data_path
+            )
+            
+        except Exception as e:
+            logging.info(f"Exception : {e}")
+            raise CustomException(e,sys)
 
 
 c = DataIngestionPhase()
