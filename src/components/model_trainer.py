@@ -52,7 +52,7 @@ class ModelTrainerPhase:
                 'DecisionTree' : DecisionTreeClassifier()
             }
 
-            model_report:dict = train_and_evaluate_model(
+            best_score, best_model = train_and_evaluate_model(
                 X_train=X_train,
                 X_test=X_test,
                 y_train=y_train,
@@ -60,23 +60,13 @@ class ModelTrainerPhase:
                 models=models
             )
 
-            print(model_report)
-            print(30*"=")
-            logging.info(f"Model Report :\n{model_report}")
+            logging.info(f"Model Report :\n{str(best_model)} : Accuracy - {best_score}")
             
-            best_model_score = max(sorted(model_report.values()))
-            
-            best_model_name = list(model_report.keys())[
-                list(model_report.values()).index(best_model_score)
-            ]
-            
-            print(f"BEST MODEL FOUND\n{30*"-"}\nMODEL NAME : {best_model_name}\nSCORE : {best_model_score}")
-            print(30*"=")
-            logging.info(f"BEST MODEL FOUND\nMODEL NAME : {best_model_name}\nSCORE : {best_model_score}")
+            print(f"BEST MODEL FOUND\n{30*"-"}\nMODEL NAME : {str(best_model)}\nSCORE : {best_score}")
 
             save_object(
                 file_path = self.modelTrainerConfig.trained_model_file_path,
-                obj = best_model_name
+                obj = best_model
             )
 
         except Exception as e:
