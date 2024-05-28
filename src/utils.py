@@ -41,21 +41,17 @@ def load_object(file_path):
 
 # fundtion to train test and evaluate the models over the data
 def train_and_evaluate_model(X_train, y_train, X_test, y_test, models) -> dict:
-    
-    # dividing into clusters
-    cluster_size = len(X_train)/6
-    index = 0
-    X_train_clusters = []
-    y_train_clusters = []
-    for i in range(0,6):
-        X_train_clusters.append(X_train[index : index+cluster_size,:])
-        y_train_clusters.append(y_train[index : index+cluster_size,:])
 
     # training per cluster and testing per model
+    cluster_size = len(X_train)//6
+    
+    clusters_X = [X_train[i * cluster_size: (i + 1) * cluster_size] for i in range(6)]
+    clusters_y = [y_train[i * cluster_size: (i + 1) * cluster_size] for i in range(6)]
+
     report = dict()
-    for i in range(0,len(X_train_clusters)):
+    for i in range(0,len(models)):
         model = list(models.values())[i]
-        model.fit(X_train_clusters[i], y_train_clusters[i])
+        model.fit(clusters_X[i], clusters_y[i])
         y_pred = model.predict(X_test)
         report.update({model : accuracy_score(y_test,y_pred)})
 

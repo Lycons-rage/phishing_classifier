@@ -70,15 +70,13 @@ class ModelTrainerPhase:
                 list(model_report.values()).index(best_model_score)
             ]
             
-            best_model = models[best_model_name]
-            
             print(f"BEST MODEL FOUND\n{30*"-"}\nMODEL NAME : {best_model_name}\nSCORE : {best_model_score}")
             print(30*"=")
             logging.info(f"BEST MODEL FOUND\nMODEL NAME : {best_model_name}\nSCORE : {best_model_score}")
 
             save_object(
                 file_path = self.modelTrainerConfig.trained_model_file_path,
-                obj = best_model
+                obj = best_model_name
             )
 
         except Exception as e:
