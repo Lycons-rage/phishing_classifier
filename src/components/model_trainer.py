@@ -8,6 +8,7 @@ sys.path.append(current)
 
 import numpy as np
 import pandas as pd
+import mlflow
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
@@ -33,42 +34,44 @@ class ModelTrainerPhase:
         self.modelTrainerConfig = ModelTrainerConfig()
 
     def modelTraining(self, train_arr, test_arr):
-        try:
-            logging.info("Model Training Starts")
-            logging.info("Splitting the data")
-            X_train, y_train, X_test, y_test = (
-                train_arr[:,:-1],
-                train_arr[:,-1],
-                test_arr[:,:-1],
-                test_arr[:,-1]
-            )
+        with mlflow.start_run() as run:
+            try:
+                logging.info("Model Training Starts")
+                logging.info("Splitting the data")
+                X_train, y_train, X_test, y_test = (
+                    train_arr[:,:-1],
+                    train_arr[:,-1],
+                    test_arr[:,:-1],
+                    test_arr[:,-1]
+                )
 
-            models = {
-                'RandomForest' : RandomForestClassifier(n_jobs=-1),
-                'SVC' : SVC(kernel='rbf'),
-                'GBM' : GradientBoostingClassifier(),
-                'ADA' : AdaBoostClassifier(),
-                'LogisticReg' : LogisticRegression(penalty='l2', n_jobs=-1),
-                'DecisionTree' : DecisionTreeClassifier()
-            }
+                models = {
+                    'RandomForest' : RandomForestClassifier(n_jobs=-1),
+                    'SVC' : SVC(kernel='rbf'),
+                    'GBM' : GradientBoostingClassifier(),
+                    'ADA' : AdaBoostClassifier(),
+                    'LogisticReg' : LogisticRegression(penalty='l2', n_jobs=-1),
+                    'DecisionTree' : DecisionTreeClassifier()
+                }
 
-            best_score, best_model = train_and_evaluate_model(
-                X_train=X_train,
-                X_test=X_test,
-                y_train=y_train,
-                y_test=y_test,
-                models=models
-            )
+                best_score, best_model = train_and_evaluate_model(
+                    X_train=X_train,
+                    X_test=X_test,
+                    y_train=y_train,
+                    y_test=y_test,
+                    models=models,
+                    run_id=run.info.run_id
+                )
 
-            logging.info(f"Model Report :\n{str(best_model)} : Accuracy - {best_score}")
-            
-            print(f"BEST MODEL FOUND\n{30*"-"}\nMODEL NAME : {str(best_model)}\nSCORE : {best_score}")
+                logging.info(f"Model Report :\n{str(best_model)} : Accuracy - {best_score}")
+                
+                print(f"BEST MODEL FOUND\n{30*"-"}\nMODEL NAME : {str(best_model)}\nSCORE : {best_score}")
 
-            save_object(
-                file_path = self.modelTrainerConfig.trained_model_file_path,
-                obj = best_model
-            )
+                save_object(
+                    file_path = self.modelTrainerConfig.trained_model_file_path,
+                    obj = best_model
+                )
 
-        except Exception as e:
-            logging.info(f"Exception : {e}")
-            raise CustomException(e,sys)
+            except Exception as e:
+                logging.info(f"Exception : {e}")
+                raise CustomException(e,sys)

@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import RandomizedSearchCV
 
 import mlflow
+import mlflow.sklearn
 import pickle
 
 from src.exception import CustomException
@@ -41,8 +42,8 @@ def load_object(file_path):
 
 
 # fundtion to train test and evaluate the models over the data
-def train_and_evaluate_model(X_train, y_train, X_test, y_test, models) -> dict:
-
+def train_and_evaluate_model(X_train, y_train, X_test, y_test, models, run_id) -> dict:
+    
     # training per cluster and testing per model
     cluster_size = len(X_train)//6    
     clusters_X = [X_train[i * cluster_size: (i + 1) * cluster_size] for i in range(6)]
@@ -84,4 +85,24 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test, models) -> dict:
     )
     random_search.fit(clusters_X[0], clusters_y[0])
 
+    # registering and logging the best model got after performing hyperparameter tuning using randomized search cv
+    model_name = random_search.best_estimator_.__class__.__name__
+    mlflow.sklearn.log_model(random_search.best_estimator_, model_name)
+    model_uri = f"run:/{run_id}/{model_name}"
+    mlflow.register_model(model_uri=model_uri, name=model_name)
+
+    log_params(random_search.best_params_)
+    log_metrics(best_model_score)
+
     return best_model_score, random_search.best_estimator_
+
+
+# logging parameters using mlflow
+def log_params(parameters:dict):
+    for key in parameters.keys():
+        mlflow.log_params(key, parameters[key])
+
+
+# logging metrics using mlflow
+def log_metrics(score):
+    mlflow.log_metrics("Accuracy : ",score)
