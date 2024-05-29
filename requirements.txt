@@ -7,4 +7,5 @@ scikit-learn
 dvc
 mlflow
 setuptools
+pygments
 -e .
