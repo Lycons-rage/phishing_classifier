@@ -9,6 +9,7 @@ from sklearn.model_selection import RandomizedSearchCV
 
 import mlflow
 import mlflow.sklearn
+import mlflow.pyfunc
 import pickle
 
 from src.exception import CustomException
@@ -106,3 +107,26 @@ def log_params(parameters:dict):
 # logging metrics using mlflow
 def log_metrics(score):
     mlflow.log_metric("Accuracy - ",score)
+
+
+# load the preprocessor as well as model object
+def load_object(file_path):
+    try:
+        with open(file_path, "r+") as op:
+            preprocessor_pickel = pickle.load(op)
+
+        try:
+            mlflow_client = mlflow.tracking.MlflowClient()
+            registered_model = mlflow_client.list_registered_models()
+            model_name = registered_model[0].name
+
+            loaded_model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/latest")
+
+        except Exception as e:
+            logging.info(f"Exception : {e}")
+            raise CustomException(e,sys)    
+        return preprocessor_pickel, loaded_model
+    
+    except Exception as e:
+        logging.info(f"Exception : {e}")
+        raise CustomException(e,sys)
