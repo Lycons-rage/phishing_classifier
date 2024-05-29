@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1716955322826
+current_stage: None
+description: null
+last_updated_timestamp: 1716955322826
+name: RandomForestClassifier
+run_id: null
+run_link: null
+source: run:/1dc424df6c5440a6926fe9ce03c88f7c/RandomForestClassifier
+status: READY
+status_message: null
+storage_location: run:/1dc424df6c5440a6926fe9ce03c88f7c/RandomForestClassifier
+user_id: null
+version: 1

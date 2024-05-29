@@ -100,9 +100,9 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test, models, run_id) -
 # logging parameters using mlflow
 def log_params(parameters:dict):
     for key in parameters.keys():
-        mlflow.log_params(key, parameters[key])
+        mlflow.log_param(key, parameters[key])
 
 
 # logging metrics using mlflow
 def log_metrics(score):
-    mlflow.log_metrics("Accuracy : ",score)
+    mlflow.log_metric("Accuracy - ",score)

@@ -18,7 +18,7 @@ import random
 class DataIngestionConfig:
     train_data_path:str = os.path.join('artifacts','train_data.csv')
     test_data_path:str = os.path.join('artifacts','test_data.csv')
-    raw_data_path:str = os.path.join('artifacts')
+    raw_data_path:str = os.path.join('artifacts', 'raw_data.csv')
 # permission denied on this address     ^
 
 class DataIngestionPhase:
@@ -29,8 +29,11 @@ class DataIngestionPhase:
         logging.info("Data Ingestion Phase Start")
         try:
             df = pd.read_csv("notebooks/data/Dataset.csv")
-            os.makedirs(self.dataIngestionConfig.raw_data_path, exist_ok=True)
-            df.to_csv(os.path.join(self.dataIngestionConfig.raw_data_path, "raw_data.csv"), index=False)
+            if os.path.exists(self.dataIngestionConfig.raw_data_path):
+               pass
+            else:
+                os.makedirs(self.dataIngestionConfig.raw_data_path, exist_ok=True)
+                df.to_csv(os.path.join(self.dataIngestionConfig.raw_data_path), index=False)
 
             logging.info("Train Test Split")    
             train_set, test_set = train_test_split(df, test_size=0.2, random_state=42)
