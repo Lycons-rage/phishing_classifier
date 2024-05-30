@@ -12,6 +12,11 @@ import mlflow.sklearn
 import mlflow.pyfunc
 import pickle
 
+import re
+from urllib.parse import urlparse
+from collections import Counter
+import math
+
 from src.exception import CustomException
 from src.logger import logging
 
@@ -112,21 +117,75 @@ def log_metrics(score):
 # load the preprocessor as well as model object
 def load_object(file_path):
     try:
-        with open(file_path, "r+") as op:
-            preprocessor_pickel = pickle.load(op)
+        with open(file_path, "r") as file_obj:
+            try:
+                #mlflow_client = mlflow.tracking.MlflowClient()
+                registered_model = mlflow.registered_model.list_registered_models()
+                model_name = registered_model[0].name
 
-        try:
-            mlflow_client = mlflow.tracking.MlflowClient()
-            registered_model = mlflow_client.list_registered_models()
-            model_name = registered_model[0].name
+                loaded_model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/latest")
 
-            loaded_model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/latest")
-
-        except Exception as e:
-            logging.info(f"Exception : {e}")
-            raise CustomException(e,sys)    
-        return preprocessor_pickel, loaded_model
+            except Exception as e:
+                logging.info(f"Exception : {e}")
+                raise CustomException(e,sys)    
+            return pickle.load(file_obj), loaded_model
     
     except Exception as e:
         logging.info(f"Exception : {e}")
         raise CustomException(e,sys)
+
+
+# get entropy of url string    
+def entropy(s) -> float:
+    """Calculate the entropy of a string."""
+    p, lns = Counter(s), float(len(s))
+    return -sum(count/lns * math.log2(count/lns) for count in p.values())
+
+
+# data preparation
+def extract_features(url:str) -> dict:
+    # Initialize the data_dict
+    data_dict = {
+        'url_length' : [len(url)],
+        'number_of_dots_in_url' : [url.count('.')],
+        'having_repeated_digits_in_url': [int(bool(re.search(r'(\d)\1', url)))],
+        'number_of_digits_in_url': [len(re.findall(r'\d', url))], 
+        'number_of_special_char_in_url': [len(re.findall(r'[~`!@#$%^&*()_\-+=\'";:<>,./?|\{}[\]]', url))],
+        'number_of_hyphens_in_url': [url.count('-')], 
+        'number_of_underline_in_url': [url.count('_')],
+        'number_of_slash_in_url': [url.count('/')], 
+        'number_of_questionmark_in_url': [url.count('?')],
+        'number_of_equal_in_url': [url.count('=')], 
+        'number_of_at_in_url': [url.count('@')],
+        'number_of_dollar_in_url': [url.count('$')], 
+        'number_of_exclamation_in_url': [url.count('!')],
+        'number_of_hashtag_in_url': [url.count('#')], 
+        'number_of_percent_in_url': [url.count('%')], 
+        'domain_length': [len(urlparse(url).netloc)],
+        'number_of_dots_in_domain': [urlparse(url).netloc.count('.')], 
+        'number_of_hyphens_in_domain': [urlparse(url).netloc.count('-')],
+        'having_special_characters_in_domain': [int(bool(re.search(r'[^a-zA-Z0-9.-]', urlparse(url).netloc)))],
+        'number_of_special_characters_in_domain': [len(re.findall(r'[^a-zA-Z0-9.-]', urlparse(url).netloc))],
+        'having_digits_in_domain': [int(bool(re.search(r'\d', urlparse(url).netloc)))],
+        'number_of_digits_in_domain': [len(re.findall(r'\d', urlparse(url).netloc))], 
+        'having_repeated_digits_in_domain': [int(bool(re.search(r'(\d)\1', urlparse(url).netloc)))],
+        'number_of_subdomains': [urlparse(url).netloc.count('.') - 1],
+        'having_dot_in_subdomain': [int(bool(re.search(r'\.', urlparse(url).netloc.split('.')[0])))],
+        'having_hyphen_in_subdomain': [int(bool(re.search(r'-', urlparse(url).netloc.split('.')[0])))],
+        'average_subdomain_length': [sum(len(part) for part in urlparse(url).netloc.split('.')) / len(urlparse(url).netloc.split('.'))],
+        'average_number_of_dots_in_subdomain': [urlparse(url).netloc.split('.').count('.') / len(urlparse(url).netloc.split('.'))],
+        'average_number_of_hyphens_in_subdomain': [urlparse(url).netloc.split('.').count('-') / len(urlparse(url).netloc.split('.'))],
+        'having_special_characters_in_subdomain': [int(bool(re.search(r'[^a-zA-Z0-9-]', urlparse(url).netloc.split('.')[0])))],
+        'number_of_special_characters_in_subdomain': [len(re.findall(r'[^a-zA-Z0-9-]', urlparse(url).netloc.split('.')[0]))],
+        'having_digits_in_subdomain': [int(bool(re.search(r'\d', urlparse(url).netloc.split('.')[0])))],
+        'number_of_digits_in_subdomain': [len(re.findall(r'\d', urlparse(url).netloc.split('.')[0]))],
+        'having_repeated_digits_in_subdomain': [int(bool(re.search(r'(\d)\1', urlparse(url).netloc.split('.')[0])))],
+        'having_path': [int(bool(urlparse(url).path))],
+        'path_length': [len(urlparse(url).path)],
+        'having_query': [int(bool(urlparse(url).query))],
+        'having_fragment': [int(bool(urlparse(url).fragment))],
+        'having_anchor': [int(bool(urlparse(url).fragment))],
+        'entropy_of_url': [entropy(url)],
+        'entropy_of_domain': [entropy(urlparse(url).netloc)]
+    }
+    return data_dict

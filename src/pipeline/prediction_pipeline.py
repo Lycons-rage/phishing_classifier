@@ -12,7 +12,7 @@ import mlflow
 
 from src.exception import CustomException
 from src.logger import logging
-from src.utils import load_object
+from src.utils import extract_features, load_object
 
 class PredictionPipeline:
     def __init__(self):
@@ -43,7 +43,7 @@ class CustomDataPreparation:
         self.url=url
 
     def prepare_data(self):
-        pass
+        return extract_features(self.url)
 
-    def get_data_as_dataframe():
-        pass
+    def get_data_as_dataframe(self, data_dict):
+        return pd.DataFrame(data_dict)

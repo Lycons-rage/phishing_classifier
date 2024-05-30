@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/WORK/PYTHON/Projects/Phishing%20Classifier/mlruns/0/c72086fb19b144ec90bff31ae67243d4/artifacts
+end_time: 1717055744026
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: c72086fb19b144ec90bff31ae67243d4
+run_name: shivering-shark-277
+run_uuid: c72086fb19b144ec90bff31ae67243d4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1717055743966
+status: 4
+tags: []
+user_id: chinm
