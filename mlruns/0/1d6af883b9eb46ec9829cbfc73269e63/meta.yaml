@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/WORK/PYTHON/Projects/Phishing%20Classifier/mlruns/0/1d6af883b9eb46ec9829cbfc73269e63/artifacts
+end_time: 1717139952505
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 1d6af883b9eb46ec9829cbfc73269e63
+run_name: clean-owl-86
+run_uuid: 1d6af883b9eb46ec9829cbfc73269e63
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1717139952300
+status: 3
+tags: []
+user_id: chinm

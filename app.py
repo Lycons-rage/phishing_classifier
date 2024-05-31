@@ -23,7 +23,7 @@ def url_test():
         dataframe = data_preparation.get_data_as_dataframe(prepared_data)
         prediction = PredictionPipeline().predict_data(dataframe)
 
-        return render_template("result.html", value = type(prediction))
+        return render_template("result.html", value = prediction)
         
     else:
         return render_template("form.html")

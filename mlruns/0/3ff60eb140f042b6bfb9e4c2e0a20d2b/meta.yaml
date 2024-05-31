@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/WORK/PYTHON/Projects/Phishing%20Classifier/mlruns/0/3ff60eb140f042b6bfb9e4c2e0a20d2b/artifacts
+end_time: 1717139742743
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 3ff60eb140f042b6bfb9e4c2e0a20d2b
+run_name: industrious-rat-22
+run_uuid: 3ff60eb140f042b6bfb9e4c2e0a20d2b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1717139741442
+status: 4
+tags: []
+user_id: chinm

@@ -94,7 +94,11 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test, models, run_id) -
 
     # registering and logging the best model got after performing hyperparameter tuning using randomized search cv
     model_name = random_search.best_estimator_.__class__.__name__
-     
+    mlflow.sklearn.log_model(
+        sk_model=random_search.best_estimator_,
+        artifact_path=f"{model_name}",
+        registered_model_name=f"{model_name}"
+    )
     mlflow_client = mlflow.MlflowClient()
     mlflow_client.create_registered_model(name=model_name)
     mlflow_client.create_model_version(
@@ -127,7 +131,7 @@ def log_metrics(score):
 # load the preprocessor as well as model object
 def load_object(file_path):
     try:
-        with open(file_path, "r") as file_obj:
+        with open(file_path, "rb") as file_obj:
             try:
                 # #mlflow_client = mlflow.tracking.MlflowClient()
                 # registered_model = mlflow.registered_model.list_registered_models()
