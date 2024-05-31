@@ -1,4 +1,4 @@
-
+# importing required libraries
 import os
 import sys
 import pickle
@@ -10,6 +10,7 @@ from sklearn.model_selection import RandomizedSearchCV
 import mlflow
 import mlflow.sklearn
 import mlflow.pyfunc
+from mlflow.models import infer_signature
 import pickle
 
 import re
@@ -93,9 +94,18 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test, models, run_id) -
 
     # registering and logging the best model got after performing hyperparameter tuning using randomized search cv
     model_name = random_search.best_estimator_.__class__.__name__
-    mlflow.sklearn.log_model(random_search.best_estimator_, model_name)
-    model_uri = f"run:/{run_id}/{model_name}"
-    mlflow.register_model(model_uri=model_uri, name=model_name)
+     
+    mlflow_client = mlflow.MlflowClient()
+    mlflow_client.create_registered_model(name=model_name)
+    mlflow_client.create_model_version(
+        name=model_name,
+        source=f"mlruns/0/{run_id}/artifacts/{model_name}",
+        run_id=run_id
+    )
+    # we need to store this model name 
+    file_path = os.path.join("artifacts","model_name.txt")
+    with open(file_path, "w") as file:
+        file.write(model_name) 
 
     log_params(random_search.best_params_)
     log_metrics(best_model_score)
@@ -119,11 +129,13 @@ def load_object(file_path):
     try:
         with open(file_path, "r") as file_obj:
             try:
-                #mlflow_client = mlflow.tracking.MlflowClient()
-                registered_model = mlflow.registered_model.list_registered_models()
-                model_name = registered_model[0].name
-
-                loaded_model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/latest")
+                # #mlflow_client = mlflow.tracking.MlflowClient()
+                # registered_model = mlflow.registered_model.list_registered_models()
+                # model_name = registered_model[0].name
+                model_file_path = os.path.join("artifacts", "model_name.txt")
+                with open(model_file_path, "r") as model_file_obj:
+                    model_name = model_file_obj.read()
+                    loaded_model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/latest")
 
             except Exception as e:
                 logging.info(f"Exception : {e}")
