@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/WORK/PYTHON/Projects/Phishing%20Classifier/mlruns/0/92413149e2054c1ba6e11c4292423bf0/artifacts
+end_time: 1717143327102
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 92413149e2054c1ba6e11c4292423bf0
+run_name: receptive-rook-697
+run_uuid: 92413149e2054c1ba6e11c4292423bf0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1717143324701
+status: 3
+tags: []
+user_id: chinm
