@@ -1,1 +1,87 @@
-{{value}}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- ===============================================-->
+    <!--    Document Title-->
+    <!-- ===============================================-->
+    <title>Phishing Detection Classifier</title>
+
+
+    <!-- ===============================================-->
+    <!--    Favicons-->
+    <!-- ===============================================-->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{url_for('static', filename = 'img/favicons/apple-touch-icon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{url_for('static', filename = 'img/favicons/favicon-32x32.png')}}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{url_for('static', filename = 'img/favicons/favicon-16x16.png')}}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{url_for('static', filename = 'img/favicons/favicon.ico')}}">
+    <link rel="manifest" href="{{url_for('static', filename = 'img/favicons/manifest.json')}}">
+    <meta name="msapplication-TileImage" content="{{url_for('static', filename = 'img/favicons/mstile-150x150.png')}}">
+    <meta name="theme-color" content="#ffffff">
+
+
+    <!-- ===============================================-->
+    <!--    Stylesheets-->
+    <!-- ===============================================-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="vendors/prism/prism.css" rel="stylesheet">
+    <link href="vendors/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/user.css')}}" />
+    <link rel="stylesheet" href="{{url_for('static', filename='css/theme.css')}}" />
+
+  </head>
+  <body>
+    <main class="main" id="top">
+        <nav class="navbar navbar-expand-lg fixed-top navbar-dark" style="position:absolute;">
+          <div class="container"><a class="navbar-brand" href="index.html"><img src="{{url_for('static', filename='img/Logo.png')}}" alt="" /></a>
+          </div>
+        </nav>
+        <div class="bg-dark"><img class="img-fluid position-absolute end-0" src="{{url_for('static', filename='img/hero/hero-bg.png')}}" alt="" />
+  
+  
+          <!-- ============================================-->
+          <!-- <section> begin ============================-->
+          <section>
+  
+            <div class="container">
+              <div class="row align-items-center py-lg-8 py-6">
+                <div class="col-lg-12 text-center text-lg-start">
+                  <center><h1 class="text-white fs-5 fs-xl-6"><b>PREDICTION REPORT</b></h1>
+                  <p class="text-white py-lg-3 py-2">The URL you entered is analysed on various characteristics of its structure listed below. You can find the visualised report below as well.</p></center>
+                  <div class="row align-items-center" style="background-color:white; border-radius:15px; padding:25px;">
+                    
+                        {% if result[0]==1: %}
+                                <div class = "bottom-title" style="background-color:#822F0E">
+                                    <center><h4 style="color:White; font-size:35px;"><b>POTENTIAL PHISHING THREAT FOUND PROCEED CAREFULLY</b></h4></center>
+                                </div>
+                        {% else %}
+                            <div class = "bottom-title" style="background-color:Green">
+                                <center><h4>THIS URL IS SAFE</h4></center>
+                            </div>
+                        {% endif %}
+                        <table>
+                        {%for col in result[1].columns%}
+                        <tr>
+                        <td class = "dynamic-content">{{col.upper()}}</td>
+                        <td class = "dynamic-content">{{result[1][col].values[0]}}</td>
+                        </tr>
+                        {%endfor%}
+                    </table>
+                </div>
+                </div>
+              </div>
+            </div>
+            <!-- end of .container-->
+  
+          </section>
+          <!-- <section> close ============================-->
+          <!-- ============================================-->
+  
+        </div>
+      </main>
