@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/WORK/PYTHON/Projects/Phishing%20Classifier/mlruns/0/8d8e5cc127b14329b9375e2c05d5fe42/artifacts
+end_time: 1717308441702
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 8d8e5cc127b14329b9375e2c05d5fe42
+run_name: overjoyed-wren-385
+run_uuid: 8d8e5cc127b14329b9375e2c05d5fe42
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1717308436225
+status: 3
+tags: []
+user_id: chinm

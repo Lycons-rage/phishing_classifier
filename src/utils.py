@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import RandomizedSearchCV
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 import mlflow
 import mlflow.sklearn
@@ -205,3 +207,11 @@ def extract_features(url:str) -> dict:
         'entropy_of_domain': [entropy(urlparse(url).netloc)]
     }
     return data_dict
+
+
+# data visualization report
+def visualize_data(prediction, dataframe):
+    file_path = "artifacts/visuals"
+    os.makedirs(file_path, exist_ok=True)
+    
+    plt.pie(dataframe["number_of_special_char_in_url"], labels=dataframe["url_length"])

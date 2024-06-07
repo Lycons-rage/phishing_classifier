@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 
 from src.pipeline.prediction_pipeline import CustomDataPreparation, PredictionPipeline
+from src.utils import visualize_data
 
 app = Flask(__name__)
 
@@ -22,6 +23,8 @@ def url_test():
 
         dataframe = data_preparation.get_data_as_dataframe(prepared_data)
         prediction = PredictionPipeline().predict_data(dataframe)
+
+        visualize_data(prediction,dataframe)
 
         return render_template("result.html", result = [prediction, dataframe])
         
